@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Book Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto"> 
+                </ul>
+                <div class="d-flex" id="authButtons">
+                    <button class="btn btn-outline-light me-2" id="showLoginBtn">Login</button>
+                    <button class="btn btn-light" id="showRegisterBtn">Register</button>
+                </div>
+                <div class="d-flex align-items-center" id="userMenu" style="display: none;">
+                    <span class="text-light me-2" id="userName"></span>
+                    <span class="badge bg-info me-2" id="userRole"></span>
+                    <button class="btn btn-outline-light" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- User Menu -->
+        <div id="userMenu" class="user-menu" style="display: none;">
+            <span id="userName"></span>
+            <button id="logoutBtn" class="btn btn-danger ms-2">Logout</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm" class="auth-form" style="display: none;">
+            <h2>Login</h2>
+            <form id="loginFormElement">
+                <div class="mb-3">
+                    <label for="loginEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="loginEmail" required>
+                </div>
+                <div class="mb-3">
+                    <label for="loginPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="button" class="btn btn-secondary ms-2" id="cancelLoginBtn">Cancel</button>
+            </form>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerForm" class="auth-form" style="display: none;">
+            <h2>Register</h2>
+            <form id="registerFormElement">
+                <div class="mb-3">
+                    <label for="registerFirstName" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="registerFirstName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="registerLastName" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="registerLastName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="registerEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="registerEmail" required>
+                </div>
+                <div class="mb-3">
+                    <label for="registerMobileNumber" class="form-label">Mobile Number</label>
+                    <input type="tel" class="form-control" id="registerMobileNumber" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Gender</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="gender" id="genderMale" value="male" required>
+                        <label class="form-check-label" for="genderMale">Male</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="female" required>
+                        <label class="form-check-label" for="genderFemale">Female</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="registerPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="registerPassword" required>
+                </div>
+                <div class="mb-3">
+                    <label for="registerConfirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="registerConfirmPassword" required>
+                </div>
+                <input type="hidden" id="registerRole" value="user">
+                <button type="submit" class="btn btn-primary">Register</button>
+                <button type="button" class="btn btn-secondary ms-2" id="cancelRegisterBtn">Cancel</button>
+            </form>
+        </div>
+
+        <!-- Books List -->
+        <div id="booksList" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Books</h2>
+                <div id="adminControls" style="display: none;">
+                    <button class="btn btn-primary" id="addBookBtn">
+                        <i class="fas fa-plus"></i> Add New Book
+                    </button>
+                    <button class="btn btn-info ms-2" id="viewOrdersBtn">
+                        <i class="fas fa-shopping-cart"></i> View Orders
+                    </button>
+                    <button class="btn btn-success ms-2" id="viewAnalysisBtn">
+                        <i class="fas fa-chart-bar"></i> View Analysis
+                    </button>
+                    <button class="btn btn-warning ms-2" id="createAdminBtn">
+                        <i class="fas fa-user-plus"></i> Create Admin
+                    </button>
+                </div>
+                <div id="userControls" style="display: none;">
+                    <button class="btn btn-info" id="viewMyOrdersBtn">
+                        <i class="fas fa-history"></i> My Orders
+                    </button>
+                </div>
+            </div>
+            <div class="row" id="booksContainer">
+                <!-- Books will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Purchase Form -->
+        <div id="purchaseForm" class="book-form full-page-form" style="display: none;">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h2 id="purchaseFormTitle" class="mb-0">Purchase Book</h2>
+                                <button type="button" class="btn-close" id="cancelPurchaseBtn"></button>
+                            </div>
+                            <div class="card-body">
+                                <form id="purchaseFormElement">
+                                    <input type="hidden" id="purchaseBookId">
+                                    <div class="mb-3">
+                                        <label for="purchaseQuantity" class="form-label">Quantity</label>
+                                        <input type="number" class="form-control" id="purchaseQuantity" min="1" value="1" required>
+                                    </div>
+                                    <h4 class="mb-3">Delivery Information</h4>
+                                    <div class="mb-3">
+                                        <label for="deliveryAddress" class="form-label">Address</label>
+                                        <input type="text" class="form-control" id="deliveryAddress" required>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="deliveryCity" class="form-label">City</label>
+                                            <input type="text" class="form-control" id="deliveryCity" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="deliveryState" class="form-label">State</label>
+                                            <input type="text" class="form-control" id="deliveryState" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="deliveryZipCode" class="form-label">ZIP Code</label>
+                                            <input type="text" class="form-control" id="deliveryZipCode" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="deliveryPhone" class="form-label">Phone Number</label>
+                                            <input type="tel" class="form-control" id="deliveryPhone" required>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Place Order</button>
+                                    <button type="button" class="btn btn-secondary ms-2" id="cancelPurchaseBtn">Cancel</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders List -->
+        <div id="ordersList" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Orders</h2>
+                <button class="btn btn-secondary" id="backToBooksBtn">
+                    <i class="fas fa-arrow-left"></i> Back to Books
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Order Date</th>
+                            <th>Customer</th>
+                            <th>Book</th>
+                            <th>Quantity</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                            <th>Delivery Info</th>
+                            <th id="actionsColumn" style="display: none;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersContainer">
+                        <!-- Orders will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Add/Edit Book Form -->
+        <div id="bookForm" class="book-form full-page-form" style="display: none;">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h2 id="bookFormTitle" class="mb-0">Add New Book</h2>
+                                <button type="button" class="btn-close" id="cancelBookBtn"></button>
+                            </div>
+                            <div class="card-body">
+                                <form id="bookFormElement">
+                                    <input type="hidden" id="bookId">
+                                    <div class="mb-3">
+                                        <label for="bookTitle" class="form-label">Title</label>
+                                        <input type="text" class="form-control" id="bookTitle" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="bookAuthor" class="form-label">Author</label>
+                                        <input type="text" class="form-control" id="bookAuthor" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="bookPublishedDate" class="form-label">Published Date</label>
+                                        <input type="date" class="form-control" id="bookPublishedDate" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="bookDescription" class="form-label">Description</label>
+                                        <textarea class="form-control" id="bookDescription" rows="3" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="bookPrice" class="form-label">Price ($)</label>
+                                        <input type="number" class="form-control" id="bookPrice" min="0" step="0.01" required>
+                                    </div>
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Admin Form -->
+        <div id="createAdminForm" class="auth-form" style="display: none;">
+            <h2>Create New Admin</h2>
+            <form id="createAdminFormElement">
+                <div class="mb-3">
+                    <label for="adminFirstName" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="adminFirstName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="adminLastName" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="adminLastName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="adminEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="adminEmail" required>
+                </div>
+                <div class="mb-3">
+                    <label for="adminMobileNumber" class="form-label">Mobile Number</label>
+                    <input type="tel" class="form-control" id="adminMobileNumber" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Gender</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="adminGender" id="adminGenderMale" value="male" required>
+                        <label class="form-check-label" for="adminGenderMale">Male</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="adminGender" id="adminGenderFemale" value="female" required>
+                        <label class="form-check-label" for="adminGenderFemale">Female</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="adminPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="adminPassword" required>
+                </div>
+                <div class="mb-3">
+                    <label for="adminConfirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="adminConfirmPassword" required>
+                </div>
+                <input type="hidden" id="adminRole" value="admin">
+                <button type="submit" class="btn btn-primary">Create Admin</button>
+                <button type="button" class="btn btn-secondary ms-2" id="cancelCreateAdminBtn">Cancel</button>
+            </form>
+        </div>
+
+        <!-- Analysis Modal -->
+        <div class="modal fade" id="analysisModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-chart-line me-2"></i>System Analysis Dashboard
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="bg-primary bg-opacity-10 p-3 rounded">
+                                                    <i class="fas fa-book fa-2x text-primary"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="card-title mb-0 text-muted">Total Books</h6>
+                                                <h3 class="mb-0 mt-2" id="totalBooks">-</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="bg-success bg-opacity-10 p-3 rounded">
+                                                    <i class="fas fa-dollar-sign fa-2x text-success"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="card-title mb-0 text-muted">Total Profit</h6>
+                                                <h3 class="mb-0 mt-2" id="totalProfit">-</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="bg-info bg-opacity-10 p-3 rounded">
+                                                    <i class="fas fa-shopping-cart fa-2x text-info"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="card-title mb-0 text-muted">Total Books Sold</h6>
+                                                <h3 class="mb-0 mt-2" id="totalBooksSold">-</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="bg-warning bg-opacity-10 p-3 rounded">
+                                                    <i class="fas fa-users fa-2x text-warning"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="card-title mb-0 text-muted">Total Users</h6>
+                                                <h3 class="mb-0 mt-2" id="totalUsers">-</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="bg-danger bg-opacity-10 p-3 rounded">
+                                                    <i class="fas fa-user-shield fa-2x text-danger"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="card-title mb-0 text-muted">Total Admins</h6>
+                                                <h3 class="mb-0 mt-2" id="totalAdmins">-</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Book Card Template -->
+    <template id="bookCardTemplate">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"></h5>
+                    <h6 class="card-subtitle mb-2 text-muted"></h6>
+                    <p class="card-text"></p>
+                    <p class="card-text"><small class="text-muted"></small></p>
+                    <p class="card-text"><strong class="text-primary"></strong></p>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-primary me-2">Edit</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html> 
